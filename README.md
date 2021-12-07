@@ -8,7 +8,7 @@ https://github.com/dqzg12300/MikManager.git
 
 ### 镜像下载
 
-> v0.0.1   链接: https://pan.baidu.com/s/1bn39KtlE8yW9A_51uAjB-w 提取码: s6ww 
+> v0.0.1   链接: https://pan.baidu.com/s/16WJovQcwq-xuhI9OI8iigQ 提取码: 12k1
 
 ### 说明
 
@@ -28,3 +28,4 @@ v0.0.2 是优化后的版本，基于PixelExperience修改的，内核相关已�
 > * frida持久化（支持listen,wait,script三种模式）
 > * 反调试（通过sleep目标函数，再附加进程来过掉起始的反调试）
 > * trace java函数（smali指令的trace）
+
