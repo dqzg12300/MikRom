@@ -1,6 +1,6 @@
 # MikRom
 
-mikrom是一个基于rom定制的逆向工具，请配合MikManager来便捷的使用。
+mikrom是一个基于rom定制的逆向工具，请配合MikManager来使用。
 
 ### MikManager
 
@@ -8,15 +8,11 @@ https://github.com/dqzg12300/MikManager.git
 
 ### 镜像下载
 
-> v0.0.1   链接: https://pan.baidu.com/s/16WJovQcwq-xuhI9OI8iigQ 提取码: 12k1
+> 链接: https://pan.baidu.com/s/1g-ueGZIA2gxxKNV3VVD3bQ  密码: sp8u
 
 ### 说明
 
-v0.0.1 是最初的版本，基于aosp10r2修改的，基本功能已完成，内核相关的部分未修改。jni部分简单打印。
-
-v0.0.2 是优化后的版本，基于PixelExperience修改的，内核相关已修改，并且jni大部分优化了打印
-
-本人测试手机型号为pixel XL
+本人测试手机型号为pixel XL，代号是marlin
 
 ### 功能
 
@@ -28,4 +24,8 @@ v0.0.2 是优化后的版本，基于PixelExperience修改的，内核相关已�
 > * frida持久化（支持listen,wait,script三种模式）
 > * 反调试（通过sleep目标函数，再附加进程来过掉起始的反调试）
 > * trace java函数（smali指令的trace）
+> * 内置dobby注入
+> * 支持自行切换frida-gadget版本
+> * 注入so
+> * 注入dex（实现对应的接口触发调用。目前仅测试使用）
 
