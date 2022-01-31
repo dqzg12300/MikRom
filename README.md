@@ -29,3 +29,6 @@ https://github.com/dqzg12300/MikManager.git
 > * 注入so
 > * 注入dex（实现对应的接口触发调用。目前仅测试使用）
 
+### 原理
+
+[FartExt超进化之奇奇怪怪的新ROM工具MikRom](https://bbs.pediy.com/thread-271358.htm)
