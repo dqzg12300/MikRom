@@ -6,13 +6,17 @@ mikrom是一个基于rom定制的逆向工具，请配合MikManager来使用。
 
 https://github.com/dqzg12300/MikManager.git
 
-### 镜像下载
+### 下载
 
-> 链接: https://pan.baidu.com/s/1g-ueGZIA2gxxKNV3VVD3bQ  密码: sp8u
+> PixelExperience_marlin卡刷包 链接: https://pan.baidu.com/s/1g-ueGZIA2gxxKNV3VVD3bQ  密码: sp8u
+>
+> aosp10r2_marlin线刷包 链接: https://pan.baidu.com/s/1oQF5hJLqYS6H9OB2vOwTAQ  密码: tvv3
+>
+> aosp10r2_sailfish线刷包 链接: https://pan.baidu.com/s/1LIdFa8vSJEmQbqXq5X7AjA  密码: q6q1
 
 ### 说明
 
-本人测试手机型号为pixel XL，代号是marlin
+PixelExperience的版本不再更新，已迁移回aosp。后续如果更新都是在aosp版本了。
 
 ### 功能
 
