@@ -10,13 +10,19 @@ https://github.com/dqzg12300/MikManager.git
 
 > PixelExperience_marlin卡刷包 链接: https://pan.baidu.com/s/1g-ueGZIA2gxxKNV3VVD3bQ  密码: sp8u
 >
-> aosp10r2_marlin线刷包 链接: https://pan.baidu.com/s/1oQF5hJLqYS6H9OB2vOwTAQ  密码: tvv3
+> aosp10r2_marlin线刷包 链接: https://pan.baidu.com/s/1NrGRy7l5sb4nhgYgIOLrPA 提取码: f7gh 
 >
 > aosp10r2_sailfish线刷包 链接: https://pan.baidu.com/s/1LIdFa8vSJEmQbqXq5X7AjA  密码: q6q1
 
 ### 说明
 
 PixelExperience的版本不再更新，已迁移回aosp。后续如果更新都是在aosp版本了。
+
+### 刷机说明
+
+卡刷包直接使用twrp-marlin的版本刷入即可。
+
+线刷包先到官网下载[官方rom](https://dl.google.com/dl/android/aosp/marlin-qp1a.190711.020-factory-2db5273a.zip)，解压后，将我的压缩包改名覆盖里面的image的压缩包，最后运行flash-all.sh即可
 
 ### 功能
 
