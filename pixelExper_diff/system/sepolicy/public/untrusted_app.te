@@ -1,0 +1,21 @@
+###
+### Untrusted apps.
+###
+### Apps are labeled based on mac_permissions.xml (maps signer and
+### optionally package name to seinfo value) and seapp_contexts (maps UID
+### and optionally seinfo value to domain for process and type for data
+### directory).  The untrusted_app domain is the default assignment in
+### seapp_contexts for any app with UID between APP_AID (10000)
+### and AID_ISOLATED_START (99000) if the app has no specific seinfo
+### value as determined from mac_permissions.xml.  In current AOSP, this
+### domain is assigned to all non-system apps as well as to any system apps
+### that are not signed by the platform key.  To move
+### a system app into a specific domain, add a signer entry for it to
+### mac_permissions.xml and assign it one of the pre-existing seinfo values
+### or define and use a new seinfo value in both mac_permissions.xml and
+### seapp_contexts.
+###
+
+type untrusted_app, domain;
+type untrusted_app_27, domain;
+type untrusted_app_25, domain;

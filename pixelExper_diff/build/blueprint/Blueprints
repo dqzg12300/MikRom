@@ -1,0 +1,199 @@
+bootstrap_go_package {
+    name: "blueprint",
+    deps: [
+        "blueprint-parser",
+        "blueprint-pathtools",
+        "blueprint-proptools",
+    ],
+    pkgPath: "github.com/google/blueprint",
+    srcs: [
+        "context.go",
+        "glob.go",
+        "live_tracker.go",
+        "mangle.go",
+        "module_ctx.go",
+        "name_interface.go",
+        "ninja_defs.go",
+        "ninja_strings.go",
+        "ninja_writer.go",
+        "package_ctx.go",
+        "scope.go",
+        "singleton_ctx.go",
+        "unpack.go",
+    ],
+    testSrcs: [
+        "context_test.go",
+        "glob_test.go",
+        "ninja_strings_test.go",
+        "ninja_writer_test.go",
+        "splice_modules_test.go",
+        "unpack_test.go",
+        "visit_test.go",
+    ],
+}
+
+bootstrap_go_package {
+    name: "blueprint-parser",
+    pkgPath: "github.com/google/blueprint/parser",
+    srcs: [
+        "parser/ast.go",
+        "parser/modify.go",
+        "parser/parser.go",
+        "parser/printer.go",
+        "parser/sort.go",
+    ],
+    testSrcs: [
+        "parser/modify_test.go",
+        "parser/parser_test.go",
+        "parser/printer_test.go",
+    ],
+}
+
+bootstrap_go_package {
+    name: "blueprint-deptools",
+    pkgPath: "github.com/google/blueprint/deptools",
+    srcs: ["deptools/depfile.go"],
+}
+
+bootstrap_go_package {
+    name: "blueprint-pathtools",
+    pkgPath: "github.com/google/blueprint/pathtools",
+    deps: [
+        "blueprint-deptools",
+    ],
+    srcs: [
+        "pathtools/lists.go",
+        "pathtools/fs.go",
+        "pathtools/glob.go",
+    ],
+    testSrcs: [
+        "pathtools/fs_test.go",
+        "pathtools/glob_test.go",
+    ],
+}
+
+bootstrap_go_package {
+    name: "blueprint-proptools",
+    pkgPath: "github.com/google/blueprint/proptools",
+    srcs: [
+        "proptools/clone.go",
+        "proptools/escape.go",
+        "proptools/extend.go",
+        "proptools/proptools.go",
+        "proptools/tag.go",
+        "proptools/typeequal.go",
+    ],
+    testSrcs: [
+        "proptools/clone_test.go",
+        "proptools/escape_test.go",
+        "proptools/extend_test.go",
+        "proptools/tag_test.go",
+        "proptools/typeequal_test.go",
+    ],
+}
+
+bootstrap_go_package {
+    name: "blueprint-bootstrap",
+    deps: [
+        "blueprint",
+        "blueprint-deptools",
+        "blueprint-pathtools",
+        "blueprint-bootstrap-bpdoc",
+    ],
+    pkgPath: "github.com/google/blueprint/bootstrap",
+    srcs: [
+        "bootstrap/bootstrap.go",
+        "bootstrap/cleanup.go",
+        "bootstrap/command.go",
+        "bootstrap/config.go",
+        "bootstrap/doc.go",
+        "bootstrap/glob.go",
+        "bootstrap/writedocs.go",
+    ],
+}
+
+bootstrap_go_package {
+    name: "blueprint-bootstrap-bpdoc",
+    deps: [
+        "blueprint",
+        "blueprint-proptools",
+    ],
+    pkgPath: "github.com/google/blueprint/bootstrap/bpdoc",
+    srcs: [
+        "bootstrap/bpdoc/bpdoc.go",
+        "bootstrap/bpdoc/properties.go",
+        "bootstrap/bpdoc/reader.go",
+    ],
+    testSrcs: [
+        "bootstrap/bpdoc/reader_test.go",
+    ],
+}
+
+bootstrap_go_binary {
+    name: "minibp",
+    deps: [
+        "blueprint",
+        "blueprint-bootstrap",
+        "gotestmain-tests",
+    ],
+    srcs: ["bootstrap/minibp/main.go"],
+}
+
+bootstrap_go_binary {
+    name: "bpglob",
+    deps: ["blueprint-pathtools"],
+    srcs: ["bootstrap/bpglob/bpglob.go"],
+}
+
+blueprint_go_binary {
+    name: "bpfmt",
+    deps: ["blueprint-parser"],
+    srcs: ["bpfmt/bpfmt.go"],
+}
+
+blueprint_go_binary {
+    name: "bpmodify",
+    deps: ["blueprint-parser"],
+    srcs: ["bpmodify/bpmodify.go"],
+}
+
+bootstrap_go_binary {
+    name: "gotestmain",
+    srcs: ["gotestmain/gotestmain.go"],
+}
+
+// gotestmain tests can't be on the gotestmain module because it is an implicit dependency of tests.
+// Put the tests in their own package and make it a dependency of minibp to make sure they run.
+bootstrap_go_package {
+    name: "gotestmain-tests",
+    pkgPath: "github.com/google/blueprint/gotestmain",
+    srcs: [
+        "gotestmain/dummy.go",
+    ],
+    testSrcs: [
+        "gotestmain/testmain_test.go",
+    ],
+}
+
+bootstrap_go_binary {
+    name: "gotestrunner",
+    srcs: ["gotestrunner/gotestrunner.go"],
+}
+
+bootstrap_go_binary {
+    name: "loadplugins",
+    srcs: ["loadplugins/loadplugins.go"],
+}
+
+blueprint_go_binary {
+    name: "microfactory",
+    deps: ["blueprint-microfactory"],
+    srcs: ["microfactory/main/main.go"],
+}
+
+bootstrap_go_package {
+    name: "blueprint-microfactory",
+    pkgPath: "github.com/google/blueprint/microfactory",
+    srcs: ["microfactory/microfactory.go"],
+    testSrcs: ["microfactory/microfactory_test.go"],
+}
