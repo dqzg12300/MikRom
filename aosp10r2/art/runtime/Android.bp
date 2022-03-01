@@ -1,0 +1,736 @@
+//
+// Copyright (C) 2011 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+// Keep the __jit_debug_register_code symbol as a unique symbol during ICF for architectures where
+// we use gold as the linker (arm, x86, x86_64). The symbol is used by the debuggers to detect when
+// new jit code is generated. We don't want it to be called when a different function with the same
+// (empty) body is called.
+JIT_DEBUG_REGISTER_CODE_LDFLAGS = [
+    "-Wl,--keep-unique,__jit_debug_register_code",
+    "-Wl,--keep-unique,__dex_debug_register_code",
+
+]
+
+libart_cc_defaults {
+    name: "libart_defaults",
+    defaults: ["art_defaults"],
+    host_supported: true,
+    srcs: [
+        "aot_class_linker.cc",
+        "art_field.cc",
+        "art_method.cc",
+        "backtrace_helper.cc",
+        "barrier.cc",
+        "base/locks.cc",
+        "base/mem_map_arena_pool.cc",
+        "base/mutex.cc",
+        "base/quasi_atomic.cc",
+        "base/timing_logger.cc",
+        "cha.cc",
+        "class_linker.cc",
+        "class_loader_context.cc",
+        "class_root.cc",
+        "class_table.cc",
+        "common_throws.cc",
+        "compiler_filter.cc",
+        "debug_print.cc",
+        "debugger.cc",
+        "dex/dex_file_annotations.cc",
+        "dex_register_location.cc",
+        "dex_to_dex_decompiler.cc",
+        "elf_file.cc",
+        "exec_utils.cc",
+        "fault_handler.cc",
+        "gc/allocation_record.cc",
+        "gc/allocator/dlmalloc.cc",
+        "gc/allocator/rosalloc.cc",
+        "gc/accounting/bitmap.cc",
+        "gc/accounting/card_table.cc",
+        "gc/accounting/heap_bitmap.cc",
+        "gc/accounting/mod_union_table.cc",
+        "gc/accounting/remembered_set.cc",
+        "gc/accounting/space_bitmap.cc",
+        "gc/collector/concurrent_copying.cc",
+        "gc/collector/garbage_collector.cc",
+        "gc/collector/immune_region.cc",
+        "gc/collector/immune_spaces.cc",
+        "gc/collector/mark_sweep.cc",
+        "gc/collector/partial_mark_sweep.cc",
+        "gc/collector/semi_space.cc",
+        "gc/collector/sticky_mark_sweep.cc",
+        "gc/gc_cause.cc",
+        "gc/heap.cc",
+        "gc/reference_processor.cc",
+        "gc/reference_queue.cc",
+        "gc/scoped_gc_critical_section.cc",
+        "gc/space/bump_pointer_space.cc",
+        "gc/space/dlmalloc_space.cc",
+        "gc/space/image_space.cc",
+        "gc/space/large_object_space.cc",
+        "gc/space/malloc_space.cc",
+        "gc/space/region_space.cc",
+        "gc/space/rosalloc_space.cc",
+        "gc/space/space.cc",
+        "gc/space/zygote_space.cc",
+        "gc/task_processor.cc",
+        "gc/verification.cc",
+        "hidden_api.cc",
+        "hprof/hprof.cc",
+        "image.cc",
+        "index_bss_mapping.cc",
+        "indirect_reference_table.cc",
+        "instrumentation.cc",
+        "intern_table.cc",
+        "interpreter/interpreter.cc",
+        "interpreter/interpreter_cache.cc",
+        "interpreter/interpreter_common.cc",
+        "interpreter/interpreter_intrinsics.cc",
+        "interpreter/interpreter_switch_impl0.cc",
+        "interpreter/interpreter_switch_impl1.cc",
+        "interpreter/interpreter_switch_impl2.cc",
+        "interpreter/interpreter_switch_impl3.cc",
+        "interpreter/lock_count_data.cc",
+        "interpreter/shadow_frame.cc",
+        "interpreter/unstarted_runtime.cc",
+        "java_frame_root_info.cc",
+        "jdwp/jdwp_event.cc",
+        "jdwp/jdwp_expand_buf.cc",
+        "jdwp/jdwp_handler.cc",
+        "jdwp/jdwp_main.cc",
+        "jdwp/jdwp_request.cc",
+        "jdwp/jdwp_socket.cc",
+        "jdwp/object_registry.cc",
+        "jit/debugger_interface.cc",
+        "jit/jit.cc",
+        "jit/jit_code_cache.cc",
+        "jit/profiling_info.cc",
+        "jit/profile_saver.cc",
+        "jni/check_jni.cc",
+        "jni/java_vm_ext.cc",
+        "jni/jni_env_ext.cc",
+        "jni/jni_internal.cc",
+        "linear_alloc.cc",
+        "managed_stack.cc",
+        "method_handles.cc",
+        "mirror/array.cc",
+        "mirror/class.cc",
+        "mirror/class_ext.cc",
+        "mirror/dex_cache.cc",
+        "mirror/emulated_stack_frame.cc",
+        "mirror/executable.cc",
+        "mirror/field.cc",
+        "mirror/method.cc",
+        "mirror/method_handle_impl.cc",
+        "mirror/method_handles_lookup.cc",
+        "mirror/method_type.cc",
+        "mirror/object.cc",
+        "mirror/stack_trace_element.cc",
+        "mirror/string.cc",
+        "mirror/throwable.cc",
+        "mirror/var_handle.cc",
+        "monitor.cc",
+        "monitor_objects_stack_visitor.cc",
+        "native_bridge_art_interface.cc",
+        "native_stack_dump.cc",
+        "native/dalvik_system_DexFile.cc",
+        "native/dalvik_system_VMDebug.cc",
+        "native/dalvik_system_VMRuntime.cc",
+        "native/dalvik_system_VMStack.cc",
+        "native/dalvik_system_ZygoteHooks.cc",
+        "native/java_lang_Class.cc",
+        "native/java_lang_Object.cc",
+        "native/java_lang_String.cc",
+        "native/java_lang_StringFactory.cc",
+        "native/java_lang_System.cc",
+        "native/java_lang_Thread.cc",
+        "native/java_lang_Throwable.cc",
+        "native/java_lang_VMClassLoader.cc",
+        "native/java_lang_invoke_MethodHandleImpl.cc",
+        "native/java_lang_ref_FinalizerReference.cc",
+        "native/java_lang_ref_Reference.cc",
+        "native/java_lang_reflect_Array.cc",
+        "native/java_lang_reflect_Constructor.cc",
+        "native/java_lang_reflect_Executable.cc",
+        "native/java_lang_reflect_Field.cc",
+        "native/java_lang_reflect_Method.cc",
+        "native/java_lang_reflect_Parameter.cc",
+        "native/java_lang_reflect_Proxy.cc",
+        "native/java_util_concurrent_atomic_AtomicLong.cc",
+        "native/libcore_util_CharsetUtils.cc",
+        "native/org_apache_harmony_dalvik_ddmc_DdmServer.cc",
+        "native/org_apache_harmony_dalvik_ddmc_DdmVmInternal.cc",
+        "native/sun_misc_Unsafe.cc",
+        "non_debuggable_classes.cc",
+        "oat.cc",
+        "oat_file.cc",
+        "oat_file_assistant.cc",
+        "oat_file_manager.cc",
+        "oat_quick_method_header.cc",
+        "object_lock.cc",
+        "offsets.cc",
+        "parsed_options.cc",
+        "plugin.cc",
+        "quick_exception_handler.cc",
+        "read_barrier.cc",
+        "reference_table.cc",
+        "reflection.cc",
+        "runtime.cc",
+        "runtime_callbacks.cc",
+        "runtime_common.cc",
+        "runtime_intrinsics.cc",
+        "runtime_options.cc",
+        "scoped_thread_state_change.cc",
+        "signal_catcher.cc",
+        "stack.cc",
+        "stack_map.cc",
+        "thread.cc",
+        "thread_list.cc",
+        "thread_pool.cc",
+        "ti/agent.cc",
+        "trace.cc",
+        "transaction.cc",
+        "var_handles.cc",
+        "vdex_file.cc",
+        "verifier/class_verifier.cc",
+        "verifier/instruction_flags.cc",
+        "verifier/method_verifier.cc",
+        "verifier/reg_type.cc",
+        "verifier/reg_type_cache.cc",
+        "verifier/register_line.cc",
+        "verifier/verifier_deps.cc",
+        "verify_object.cc",
+        "well_known_classes.cc",
+
+        "arch/context.cc",
+        "arch/instruction_set_features.cc",
+        "arch/memcmp16.cc",
+        "arch/arm/instruction_set_features_arm.cc",
+        "arch/arm/registers_arm.cc",
+        "arch/arm64/instruction_set_features_arm64.cc",
+        "arch/arm64/registers_arm64.cc",
+        "arch/mips/instruction_set_features_mips.cc",
+        "arch/mips/registers_mips.cc",
+        "arch/mips64/instruction_set_features_mips64.cc",
+        "arch/mips64/registers_mips64.cc",
+        "arch/x86/instruction_set_features_x86.cc",
+        "arch/x86/registers_x86.cc",
+        "arch/x86_64/registers_x86_64.cc",
+        "entrypoints/entrypoint_utils.cc",
+        "entrypoints/jni/jni_entrypoints.cc",
+        "entrypoints/math_entrypoints.cc",
+        "entrypoints/quick/quick_alloc_entrypoints.cc",
+        "entrypoints/quick/quick_cast_entrypoints.cc",
+        "entrypoints/quick/quick_deoptimization_entrypoints.cc",
+        "entrypoints/quick/quick_dexcache_entrypoints.cc",
+        "entrypoints/quick/quick_entrypoints_enum.cc",
+        "entrypoints/quick/quick_field_entrypoints.cc",
+        "entrypoints/quick/quick_fillarray_entrypoints.cc",
+        "entrypoints/quick/quick_jni_entrypoints.cc",
+        "entrypoints/quick/quick_lock_entrypoints.cc",
+        "entrypoints/quick/quick_math_entrypoints.cc",
+        "entrypoints/quick/quick_thread_entrypoints.cc",
+        "entrypoints/quick/quick_throw_entrypoints.cc",
+        "entrypoints/quick/quick_trampoline_entrypoints.cc",
+    ],
+
+    arch: {
+        arm: {
+            srcs: [
+                "interpreter/mterp/mterp.cc",
+                ":libart_mterp.arm",
+                "arch/arm/context_arm.cc",
+                "arch/arm/entrypoints_init_arm.cc",
+                "arch/arm/instruction_set_features_assembly_tests.S",
+                "arch/arm/jni_entrypoints_arm.S",
+                "arch/arm/memcmp16_arm.S",
+                "arch/arm/quick_entrypoints_arm.S",
+                "arch/arm/quick_entrypoints_cc_arm.cc",
+                "arch/arm/thread_arm.cc",
+                "arch/arm/fault_handler_arm.cc",
+            ],
+        },
+        arm64: {
+            srcs: [
+                "interpreter/mterp/mterp.cc",
+                ":libart_mterp.arm64",
+                "arch/arm64/context_arm64.cc",
+                "arch/arm64/entrypoints_init_arm64.cc",
+                "arch/arm64/jni_entrypoints_arm64.S",
+                "arch/arm64/memcmp16_arm64.S",
+                "arch/arm64/quick_entrypoints_arm64.S",
+                "arch/arm64/thread_arm64.cc",
+                "monitor_pool.cc",
+                "arch/arm64/fault_handler_arm64.cc",
+            ],
+        },
+        x86: {
+            srcs: [
+                "interpreter/mterp/mterp.cc",
+                ":libart_mterp.x86",
+                "arch/x86/context_x86.cc",
+                "arch/x86/entrypoints_init_x86.cc",
+                "arch/x86/jni_entrypoints_x86.S",
+                "arch/x86/memcmp16_x86.S",
+                "arch/x86/quick_entrypoints_x86.S",
+                "arch/x86/thread_x86.cc",
+                "arch/x86/fault_handler_x86.cc",
+            ],
+        },
+        x86_64: {
+            srcs: [
+                // Note that the fault_handler_x86.cc is not a mistake.  This file is
+                // shared between the x86 and x86_64 architectures.
+                "interpreter/mterp/mterp.cc",
+                ":libart_mterp.x86_64",
+                "arch/x86_64/context_x86_64.cc",
+                "arch/x86_64/entrypoints_init_x86_64.cc",
+                "arch/x86_64/jni_entrypoints_x86_64.S",
+                "arch/x86_64/memcmp16_x86_64.S",
+                "arch/x86_64/quick_entrypoints_x86_64.S",
+                "arch/x86_64/thread_x86_64.cc",
+                "monitor_pool.cc",
+                "arch/x86/fault_handler_x86.cc",
+            ],
+        },
+        mips: {
+            srcs: [
+                "interpreter/mterp/mterp.cc",
+                ":libart_mterp.mips",
+                "arch/mips/context_mips.cc",
+                "arch/mips/entrypoints_init_mips.cc",
+                "arch/mips/jni_entrypoints_mips.S",
+                "arch/mips/memcmp16_mips.S",
+                "arch/mips/quick_entrypoints_mips.S",
+                "arch/mips/thread_mips.cc",
+                "arch/mips/fault_handler_mips.cc",
+            ],
+        },
+        mips64: {
+            srcs: [
+                "interpreter/mterp/mterp.cc",
+                ":libart_mterp.mips64",
+                "arch/mips64/context_mips64.cc",
+                "arch/mips64/entrypoints_init_mips64.cc",
+                "arch/mips64/jni_entrypoints_mips64.S",
+                "arch/mips64/memcmp16_mips64.S",
+                "arch/mips64/quick_entrypoints_mips64.S",
+                "arch/mips64/thread_mips64.cc",
+                "monitor_pool.cc",
+                "arch/mips64/fault_handler_mips64.cc",
+            ],
+        },
+    },
+    target: {
+        android: {
+            srcs: [
+                "jdwp/jdwp_adb.cc",
+                "monitor_android.cc",
+                "runtime_android.cc",
+                "thread_android.cc",
+            ],
+            shared_libs: [
+                "libdl_android",
+            ],
+            static_libs: [
+                "libz",  // For adler32.
+            ],
+            cflags: [
+                // ART is allowed to link to libicuuc directly
+                // since they are in the same module
+                "-DANDROID_LINK_SHARED_ICU4C",
+                "-Wno-error",
+
+            ],
+        },
+        android_arm: {
+            ldflags: JIT_DEBUG_REGISTER_CODE_LDFLAGS,
+        },
+        android_arm64: {
+            ldflags: JIT_DEBUG_REGISTER_CODE_LDFLAGS,
+        },
+        android_x86: {
+            ldflags: JIT_DEBUG_REGISTER_CODE_LDFLAGS,
+        },
+        android_x86_64: {
+            ldflags: JIT_DEBUG_REGISTER_CODE_LDFLAGS,
+        },
+        host: {
+            srcs: [
+                "monitor_linux.cc",
+                "runtime_linux.cc",
+                "thread_linux.cc",
+            ],
+            shared_libs: [
+                "libz",  // For adler32.
+            ],
+        },
+    },
+    cflags: ["-DBUILDING_LIBART=1"],
+    generated_sources: ["art_operator_srcs"],
+    // asm_support_gen.h (used by asm_support.h) is generated with cpp-define-generator
+    generated_headers: ["cpp-define-generator-asm-support"],
+    // export our headers so the libart-gtest targets can use it as well.
+    export_generated_headers: ["cpp-define-generator-asm-support"],
+    include_dirs: [
+        "art/sigchainlib",
+        "external/zlib",
+    ],
+    header_libs: [
+        "art_cmdlineparser_headers",
+        "cpp-define-generator-definitions",
+        "libicuuc_headers",
+        "libnativehelper_header_only",
+        "jni_platform_headers",
+    ],
+    shared_libs: [
+        "libartpalette",
+        "libnativebridge",
+        "libnativeloader",
+        "libbacktrace",
+        "liblog",
+        // For common macros.
+        "libbase",
+    ],
+    static: {
+        static_libs: ["libsigchain_dummy"],
+    },
+    shared: {
+        shared_libs: ["libsigchain"],
+    },
+    export_include_dirs: ["."],
+    // ART's macros.h depends on libbase's macros.h.
+    // Note: runtime_options.h depends on cmdline. But we don't really want to export this
+    //       generically. dex2oat takes care of it itself.
+    export_shared_lib_headers: ["libbase"],
+}
+
+libart_static_cc_defaults {
+    name: "libart_static_base_defaults",
+    static_libs: [
+        "libartpalette",
+        "libbacktrace",
+        "libbase",
+        "libdexfile_external",  // libunwindstack dependency
+        "libdexfile_support",  // libunwindstack dependency
+        "liblog",
+        "libnativebridge",
+        "libnativeloader",
+        "libsigchain_dummy",
+        "libunwindstack",
+        "libz",
+    ],
+}
+
+cc_defaults {
+    name: "libart_static_defaults",
+    defaults: [
+        "libart_static_base_defaults",
+        "libartbase_static_defaults",
+        "libdexfile_static_defaults",
+        "libprofile_static_defaults",
+    ],
+    static_libs: [
+        "libart",
+        "libelffile",
+    ],
+}
+
+cc_defaults {
+    name: "libartd_static_defaults",
+    defaults: [
+        "libart_static_base_defaults",
+        "libartbased_static_defaults",
+        "libdexfiled_static_defaults",
+        "libprofiled_static_defaults",
+    ],
+    static_libs: [
+        "libartd",
+        "libelffiled",
+    ],
+}
+
+gensrcs {
+    name: "art_operator_srcs",
+    cmd: "$(location generate_operator_out) art/runtime $(in) > $(out)",
+    tools: ["generate_operator_out"],
+    srcs: [
+        "base/callee_save_type.h",
+        "base/locks.h",
+        "class_loader_context.h",
+        "class_status.h",
+        "debugger.h",
+        "gc_root.h",
+        "gc/allocator_type.h",
+        "gc/allocator/rosalloc.h",
+        "gc/collector_type.h",
+        "gc/collector/gc_type.h",
+        "gc/heap.h",
+        "gc/space/region_space.h",
+        "gc/space/space.h",
+        "gc/weak_root_state.h",
+        "image.h",
+        "instrumentation.h",
+        "indirect_reference_table.h",
+        "jdwp_provider.h",
+        "jdwp/jdwp.h",
+        "jdwp/jdwp_constants.h",
+        "lock_word.h",
+        "oat.h",
+        "object_callbacks.h",
+        "process_state.h",
+        "stack.h",
+        "suspend_reason.h",
+        "thread.h",
+        "thread_state.h",
+        "ti/agent.h",
+        "trace.h",
+        "verifier/verifier_enums.h",
+    ],
+    output_extension: "operator_out.cc",
+}
+
+// We always build dex2oat and dependencies, even if the host build is otherwise disabled, since
+// they are used to cross compile for the target.
+
+art_cc_library {
+    name: "libart",
+    defaults: ["libart_defaults"],
+    // Leave the symbols in the shared library so that stack unwinders can
+    // produce meaningful name resolution.
+    strip: {
+        keep_symbols: true,
+    },
+    whole_static_libs: [
+    ],
+    static_libs: [
+        "libelffile",
+    ],
+    shared_libs: [
+        "libartbase",
+        "libdexfile",
+        "libprofile",
+    ],
+    export_shared_lib_headers: [
+        "libdexfile",
+    ],
+    target: {
+        android: {
+            lto: {
+                 thin: true,
+            },
+        },
+    },
+}
+
+art_cc_library {
+    name: "libartd",
+    defaults: [
+        "art_debug_defaults",
+        "libart_defaults",
+    ],
+    whole_static_libs: [
+    ],
+    static_libs: [
+        "libelffiled",
+    ],
+    shared_libs: [
+        "libartbased",
+        "libdexfiled",
+        "libprofiled",
+    ],
+    export_shared_lib_headers: [
+        "libdexfiled",
+    ],
+}
+
+art_cc_library {
+    name: "libart-runtime-gtest",
+    defaults: ["libart-gtest-defaults"],
+    srcs: [
+        "common_runtime_test.cc",
+        "dexopt_test.cc",
+    ],
+    shared_libs: [
+        "libartd",
+        "libartbase-art-gtest",
+        "libbase",
+        "libbacktrace",
+    ],
+    header_libs: [
+        "libnativehelper_header_only",
+    ],
+}
+
+art_cc_test {
+    name: "art_runtime_tests",
+    defaults: [
+        "art_gtest_defaults",
+    ],
+    srcs: [
+        "arch/arch_test.cc",
+        "arch/instruction_set_features_test.cc",
+        "arch/memcmp16_test.cc",
+        "arch/stub_test.cc",
+        "arch/arm/instruction_set_features_arm_test.cc",
+        "arch/arm64/instruction_set_features_arm64_test.cc",
+        "arch/mips/instruction_set_features_mips_test.cc",
+        "arch/mips64/instruction_set_features_mips64_test.cc",
+        "arch/x86/instruction_set_features_x86_test.cc",
+        "arch/x86_64/instruction_set_features_x86_64_test.cc",
+        "barrier_test.cc",
+        "base/mutex_test.cc",
+        "base/timing_logger_test.cc",
+        "cha_test.cc",
+        "class_linker_test.cc",
+        "class_loader_context_test.cc",
+        "class_table_test.cc",
+        "compiler_filter_test.cc",
+        "entrypoints/math_entrypoints_test.cc",
+        "entrypoints/quick/quick_trampoline_entrypoints_test.cc",
+        "entrypoints_order_test.cc",
+        "exec_utils_test.cc",
+        "gc/accounting/card_table_test.cc",
+        "gc/accounting/mod_union_table_test.cc",
+        "gc/accounting/space_bitmap_test.cc",
+        "gc/collector/immune_spaces_test.cc",
+        "gc/heap_test.cc",
+        "gc/heap_verification_test.cc",
+        "gc/reference_queue_test.cc",
+        "gc/space/dlmalloc_space_static_test.cc",
+        "gc/space/dlmalloc_space_random_test.cc",
+        "gc/space/image_space_test.cc",
+        "gc/space/large_object_space_test.cc",
+        "gc/space/rosalloc_space_static_test.cc",
+        "gc/space/rosalloc_space_random_test.cc",
+        "gc/space/space_create_test.cc",
+        "gc/system_weak_test.cc",
+        "gc/task_processor_test.cc",
+        "gtest_test.cc",
+        "handle_scope_test.cc",
+        "hidden_api_test.cc",
+        "imtable_test.cc",
+        "indirect_reference_table_test.cc",
+        "instrumentation_test.cc",
+        "intern_table_test.cc",
+        "interpreter/safe_math_test.cc",
+        "interpreter/unstarted_runtime_test.cc",
+        "jdwp/jdwp_options_test.cc",
+        "jit/profiling_info_test.cc",
+        "jni/java_vm_ext_test.cc",
+        "jni/jni_internal_test.cc",
+        "method_handles_test.cc",
+        "mirror/dex_cache_test.cc",
+        "mirror/method_type_test.cc",
+        "mirror/object_test.cc",
+        "mirror/var_handle_test.cc",
+        "monitor_pool_test.cc",
+        "monitor_test.cc",
+        "oat_file_test.cc",
+        "oat_file_assistant_test.cc",
+        "parsed_options_test.cc",
+        "prebuilt_tools_test.cc",
+        "proxy_test.cc",
+        "reference_table_test.cc",
+        "runtime_callbacks_test.cc",
+        "runtime_test.cc",
+        "subtype_check_info_test.cc",
+        "subtype_check_test.cc",
+        "thread_pool_test.cc",
+        "transaction_test.cc",
+        "two_runtimes_test.cc",
+        "vdex_file_test.cc",
+        "verifier/method_verifier_test.cc",
+        "verifier/reg_type_test.cc",
+    ],
+    shared_libs: [
+        "libbacktrace",
+    ],
+    header_libs: [
+        "art_cmdlineparser_headers", // For parsed_options_test.
+    ],
+    include_dirs: [
+        "external/zlib",
+    ],
+}
+
+art_cc_test {
+    name: "art_runtime_compiler_tests",
+    defaults: [
+        "art_gtest_defaults",
+    ],
+    srcs: [
+        "reflection_test.cc",
+        "module_exclusion_test.cc",
+    ],
+    shared_libs: [
+        "libartd-compiler",
+        "libvixld",
+    ],
+}
+
+cc_library_headers {
+    name: "libart_runtime_headers",
+    host_supported: true,
+    export_include_dirs: ["."],
+}
+
+genrule {
+  name: "libart_mterp.arm",
+  out: ["mterp_arm.S"],
+  srcs: ["interpreter/mterp/arm/*.S"],
+  tool_files: ["interpreter/mterp/gen_mterp.py", "interpreter/mterp/common/gen_setup.py"],
+  cmd: "$(location interpreter/mterp/gen_mterp.py) $(out) $(in)",
+}
+
+genrule {
+  name: "libart_mterp.arm64",
+  out: ["mterp_arm64.S"],
+  srcs: ["interpreter/mterp/arm64/*.S"],
+  tool_files: ["interpreter/mterp/gen_mterp.py", "interpreter/mterp/common/gen_setup.py"],
+  cmd: "$(location interpreter/mterp/gen_mterp.py) $(out) $(in)",
+}
+
+genrule {
+  name: "libart_mterp.mips",
+  out: ["mterp_mips.S"],
+  srcs: ["interpreter/mterp/mips/*.S"],
+  tool_files: ["interpreter/mterp/gen_mterp.py", "interpreter/mterp/common/gen_setup.py"],
+  cmd: "$(location interpreter/mterp/gen_mterp.py) $(out) $(in)",
+}
+
+genrule {
+  name: "libart_mterp.mips64",
+  out: ["mterp_mips64.S"],
+  srcs: ["interpreter/mterp/mips64/*.S"],
+  tool_files: ["interpreter/mterp/gen_mterp.py", "interpreter/mterp/common/gen_setup.py"],
+  cmd: "$(location interpreter/mterp/gen_mterp.py) $(out) $(in)",
+}
+
+genrule {
+  name: "libart_mterp.x86",
+  out: ["mterp_x86.S"],
+  srcs: ["interpreter/mterp/x86/*.S"],
+  tool_files: ["interpreter/mterp/gen_mterp.py", "interpreter/mterp/common/gen_setup.py"],
+  cmd: "$(location interpreter/mterp/gen_mterp.py) $(out) $(in)",
+}
+
+genrule {
+  name: "libart_mterp.x86_64",
+  out: ["mterp_x86_64.S"],
+  srcs: ["interpreter/mterp/x86_64/*.S"],
+  tool_files: ["interpreter/mterp/gen_mterp.py", "interpreter/mterp/common/gen_setup.py"],
+  cmd: "$(location interpreter/mterp/gen_mterp.py) $(out) $(in)",
+}
