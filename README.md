@@ -66,3 +66,6 @@ PixelExperience的版本不再更新，已迁移回aosp。后续如果更新都�
 [MikRom简单使用脱壳演示](https://www.bilibili.com/video/BV1vb4y1x73Q?spm_id_from=333.999.0.0)
 
 [MikRom的注入功能](https://www.bilibili.com/video/BV1tL411N7w1?spm_id_from=333.999.0.0)
+
+[MikRom内置的frida-gadget使用](https://www.bilibili.com/video/BV1RS4y137p1/)
+
