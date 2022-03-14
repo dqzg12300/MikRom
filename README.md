@@ -13,6 +13,8 @@ https://github.com/dqzg12300/MikManager.git
 > aosp10r2_marlin线刷包 链接: https://pan.baidu.com/s/1NrGRy7l5sb4nhgYgIOLrPA 提取码: f7gh 
 >
 > aosp10r2_sailfish线刷包 链接: https://pan.baidu.com/s/1LIdFa8vSJEmQbqXq5X7AjA  密码: q6q1
+>
+> Aosp源码完整包 链接: https://pan.baidu.com/s/1UZBD6ZmhJ9IXPyMluHeVmw 提取码: ifgc 
 
 ### 说明
 
