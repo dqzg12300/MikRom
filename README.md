@@ -14,6 +14,8 @@ https://github.com/dqzg12300/MikManager.git
 >
 > aosp10r2_sailfish线刷包 链接: https://pan.baidu.com/s/1LIdFa8vSJEmQbqXq5X7AjA  密码: q6q1
 >
+> aosp10r2_marlin_1.0.1线刷包 链接: https://pan.baidu.com/s/1RVpoD17mava4-xO052NShQ  密码: ip7n
+>
 > Aosp源码完整包 链接: https://pan.baidu.com/s/1UZBD6ZmhJ9IXPyMluHeVmw 提取码: ifgc 
 
 ### 说明
@@ -57,7 +59,7 @@ PixelExperience的版本不再更新，已迁移回aosp。后续如果更新都�
 > * 内置dobby注入
 > * 支持自行切换frida-gadget版本
 > * 注入so
-> * 注入dex（实现对应的接口触发调用。目前仅测试使用）
+> * 注入dex（实现免root的xposed）
 
 ### 原理
 
