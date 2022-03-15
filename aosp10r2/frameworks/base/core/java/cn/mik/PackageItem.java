@@ -42,6 +42,12 @@ public class PackageItem{
     public boolean enabled;
 
     public int port;
+    //文件重定向列表，格式为:文件A->文件B,多条用换行分割
+    public String rediectFile;
+    //目录重定向列表,格式为:文件A->文件B,多个路径用换行分割
+    public String rediectDir;
+    //拒绝访问的路径,多个路径用换行分割
+    public String forbids;
 
     public PackageItem(){
 

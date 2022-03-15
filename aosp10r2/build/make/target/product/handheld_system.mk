@@ -88,8 +88,10 @@ PRODUCT_COPY_FILES += \
     frameworks/base/cmds/mycmds/libfdgg15x64.so:$(TARGET_COPY_OUT_SYSTEM)/lib64/libfdgg15.so \
     frameworks/base/cmds/mycmds/libfdgg14x86.so:$(TARGET_COPY_OUT_SYSTEM)/lib/libfdgg14.so \
     frameworks/base/cmds/mycmds/libfdgg14x64.so:$(TARGET_COPY_OUT_SYSTEM)/lib64/libfdgg14.so \
-    frameworks/base/cmds/mycmds/libdby.so:$(TARGET_COPY_OUT_SYSTEM)/lib64/libdby.so \
-    frameworks/base/cmds/mycmds/libdby_64.so:$(TARGET_COPY_OUT_SYSTEM)/lib64/libdby_64.so 
+    frameworks/base/cmds/mycmds/libdby.so:$(TARGET_COPY_OUT_SYSTEM)/lib/libdby.so \
+    frameworks/base/cmds/mycmds/libdby_64.so:$(TARGET_COPY_OUT_SYSTEM)/lib64/libdby.so \
+    frameworks/base/cmds/mycmds/libsandhook_86.so:$(TARGET_COPY_OUT_SYSTEM)/lib/libsandhook.so \
+    frameworks/base/cmds/mycmds/libsandhook_64.so:$(TARGET_COPY_OUT_SYSTEM)/lib64/libsandhook.so
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown \
     ro.config.notification_sound=OnTheHunt.ogg \

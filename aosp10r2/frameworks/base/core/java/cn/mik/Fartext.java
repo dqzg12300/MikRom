@@ -6,6 +6,7 @@ import android.app.IMikRom;
 import android.os.FileUtils;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.os.ServiceManager;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -28,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cn.mik.iohook.NativeEngine;
 import dalvik.system.DexClassLoader;
 
 public class Fartext {
@@ -158,7 +160,8 @@ public class Fartext {
                 "android.app.ActivityThread$AppBindData",
                 mBoundApplication, "info");
         Application mApplication = (Application) getFieldObject("android.app.LoadedApk", loadedApkInfo, "mApplication");
-        Log.e("mikrom", "go into app->" + "packagename:" + mApplication.getPackageName());
+        String processName = ActivityThread.currentProcessName();
+        Log.e("mikrom", "go into app->" + "packagename:" + processName);
         resultClassloader = mApplication.getClassLoader();
         return resultClassloader;
     }
@@ -479,17 +482,14 @@ public class Fartext {
     public static IMikRom getiMikRom() {
         if (iMikRom == null) {
             try {
-                Class localClass = Class.forName("android.os.ServiceManager");
-                Method getService = localClass.getMethod("getService", new Class[] {String.class});
-                if(getService != null) {
-                    Object objResult = getService.invoke(localClass, new Object[]{"mikrom"});
-                    if (objResult != null) {
-                        IBinder binder = (IBinder) objResult;
-                        iMikRom = IMikRom.Stub.asInterface(binder);
-                    }
+                IBinder binder =ServiceManager.getService("mikrom");
+                if(binder==null){
+                    Log.d("mikrom","getiMikRom binder is null");
+                    return iMikRom;
                 }
+                iMikRom = IMikRom.Stub.asInterface(binder);
             } catch (Exception e) {
-                Log.d("MikManager",e.getMessage());
+                Log.d("mikrom","getiMikRom exception "+e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -513,6 +513,7 @@ public class Fartext {
         try {
             mikConfigs=new ArrayList<PackageItem>();
             String mikromConfigJson=getMikConfig();
+            Log.e("mikrom", "initConfig config:"+mikromConfigJson);
             if(mikromConfigJson.length()>5){
                 final JSONArray arr = new JSONArray(mikromConfigJson);
                 Log.e("mikrom", "initConfig package count:"+arr.length());
@@ -545,8 +546,13 @@ public class Fartext {
                     cfg.soPath=jobj.getString("soPath");
                     cfg.dexPath=jobj.getString("dexPath");
                     cfg.isDobby=jobj.getBoolean("isDobby");
+                    cfg.forbids=jobj.getString("forbids");
+                    cfg.rediectFile=jobj.getString("rediectFile");
+                    cfg.rediectDir=jobj.getString("rediectDir");
+                    cfg.dexClassName=jobj.getString("dexClassName");
                     mikConfigs.add(cfg);
                     Log.e("mikrom", "initConfig packageName" + cfg.packageName);
+                    String processName = ActivityThread.currentProcessName();
                 }
             }
             String breakPath="/data/system/break.conf";
@@ -646,7 +652,7 @@ public class Fartext {
         FileUtils.setPermissions(tagPath, perm, -1, -1);//将权限改为777
         File file = new File(tagPath);
         if (file.exists()){
-            Log.e("mikrom", "load so:"+tagPath);
+            Log.e("mikrom", "load so src:"+path+" to:"+tagPath);
             System.load(tagPath);
             file.delete();//用完就删否则不会更新
         }
@@ -658,16 +664,15 @@ public class Fartext {
         for(PackageItem item : mikConfigs){
             if(!item.packageName.equals(processName))
                 continue;
-            if(item.soPath.length()<=0)
-                continue;
-
             if(item.isDobby){
                 if(System.getProperty("os.arch").indexOf("64") >= 0) {
-                    loadSo("/system/lib64/libdby_64.so");
+                    loadSo("/system/lib64/libdby.so");
                 }else{
                     loadSo("/system/lib/libdby.so");
                 }
             }
+            if(item.soPath.length()<=0)
+                continue;
             String[] soList=item.soPath.split("\n");
             for(String sopath :soList){
                 loadSo(sopath);
@@ -691,6 +696,7 @@ public class Fartext {
                     app.getPackageResourcePath(),//原生库路径
                     app.getClassLoader()//父类加载器
             );
+            Log.e("mikrom", "load dex:"+tagPath);
             return dexClassLoader;
         }
         return null;
@@ -706,16 +712,31 @@ public class Fartext {
                 continue;
             String[] dexList=item.dexPath.split("\n");
             for(String dexpath :dexList){
+                loadDex(dexpath,app);
                 DexClassLoader dexClassLoader= loadDex(dexpath,app);
                 Class clzz = null;
                 try {
-                    if(item.dexClassName.length()>=0){
+                    if(item.dexClassName.length()>0){
+                        Log.e("mikrom", "loadConfigDex class:"+item.dexClassName);
                         clzz = dexClassLoader.loadClass(item.dexClassName);
                     }else{
                         clzz = dexClassLoader.loadClass("cn.mik.InjectDex");
                     }
                     IMikDex lib = (IMikDex)clzz.newInstance();
-                    lib.onStart();
+                    Log.e("mikrom", "loadConfigDex class:"+item.dexClassName+" invoke onStart");
+                    String path="";
+                    if(System.getProperty("os.arch").indexOf("64") >= 0) {
+                        path="/system/lib64/libsandhook.so";
+                    }else{
+                        path="/system/lib/libsandhook.so";
+                    }
+                    String tagPath = "/data/data/" + processName + "/libsandhook.so";//64位so的目录
+                    mycopy(path, tagPath);
+                    int perm = FileUtils.S_IRWXU | FileUtils.S_IRWXG | FileUtils.S_IRWXO;
+                    FileUtils.setPermissions(tagPath, perm, -1, -1);//将权限改为777
+
+                    lib.onStart(tagPath);
+
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
@@ -730,93 +751,147 @@ public class Fartext {
     //加载frida-gadget,实现持久化frida
     public static void loadGadget(){
         String processName = ActivityThread.currentProcessName();
+        Log.e("mikrom", "loadGadget enter package:" + processName);
         for(PackageItem item : mikConfigs){
+            Log.e("mikrom", "loadGadget package:" + processName+" mikconfig:"+item.packageName);
             if(item.packageName.equals(processName)){
                 try{
-                    boolean flag=true;
                     if(item.fridaJsPath.length()<=0){
+                        Log.e("mikrom", "loadGadget package:" + processName+" jspath <=0");
                         continue;
                     }
-                    String configPath="/data/data/"+processName+"/libfdgg.config.so";
-                    String configPath2="/data/data/"+processName+"/libfdgg32.config.so";
+                    String gadPath="";
+                    String arch=System.getProperty("os.arch");
+                    if(item.gadgetPath!=null&&item.gadgetPath.length()>0){
+                        if (arch.indexOf("64") >= 0) {
+                            gadPath=item.gadgetArm64Path;
+                        }else{
+                            gadPath=item.gadgetPath;
+                        }
+                    }else{
+                        boolean use14=false;
+                        IMikRom mikrom=getiMikRom();
+                        if(mikrom!=null){
+                            String res= mikrom.readFile("/data/system/fver14.conf");
+                            Log.e("mikrom", "fver14.conf data "+res);
+                            if(res.contains("1")){
+                                use14=true;
+                            }
+                        }
+                        if (System.getProperty("os.arch").indexOf("64") >= 0) {
+                            if(use14){
+                                gadPath="/system/lib64/libfdgg14.so";
+                            }else{
+                                gadPath="/system/lib64/libfdgg15.so";
+                            }
+                        }else{
+                            if(use14){
+                                gadPath="/system/lib/libfdgg14.so";
+                            }else{
+                                gadPath="/system/lib/libfdgg15.so";
+                            }
+                        }
+                    }
+                    Log.e("mikrom", "loadGadget package:" + processName+" gadPath:"+gadPath);
+                    File gadfile=new File(gadPath);
+                    String name=gadfile.getName().replace(".so","");
+                    String configPath="/data/data/"+processName+"/"+name+".config.so";
                     if(item.fridaJsPath.equals("listen")||item.fridaJsPath.equals("listen_wait")){
                         WriteConfig(configPath,item.fridaJsPath,item.port);
-                        WriteConfig(configPath2,item.fridaJsPath,item.port);
                     }else{
                         File file = new File(item.fridaJsPath);
                         if(!file.exists()){
                             file = new File( "/data/data/" + processName +"/"+file.getName());
                         }
                         if(!file.exists()){
-                            Log.e("mikrom", "initConfig package:" + processName+" frida js path:"+item.fridaJsPath+" not found");
+                            Log.e("mikrom", "loadGadget package:" + processName+" frida js path:"+item.fridaJsPath+" not found");
                             continue;
                         }
                         WriteConfig(configPath,item.fridaJsPath,item.port);
-                        WriteConfig(configPath2,item.fridaJsPath,item.port);
                     }
-                    String tagPath = "/data/data/" + processName + "/libfdgg.so";//64位so的目录
-                    String tagPath2 = "/data/data/" + processName + "/libfdgg32.so";//32位的so目录
-
-                    if(item.gadgetPath!=null&&item.gadgetPath.length()>0){
-                        Log.e("mikrom", "use custom frida path:"+item.gadgetPath);
-                        mycopy(item.gadgetArm64Path, tagPath);//复制so到私有目录
-                        mycopy(item.gadgetPath, tagPath2);
-                    }else{
-                        String so64Path="/system/lib64/libfdgg15.so";
-                        String so32Path="/system/lib/libfdgg15.so";
-                        IMikRom mikrom=getiMikRom();
-                        if(mikrom!=null){
-                            String res= mikrom.readFile("/data/system/fver14.conf");
-                            if(res.equals("1")){
-                                Log.e("mikrom", "use frida14 gadget");
-                                so64Path="/system/lib64/libfdgg14.so";
-                                so32Path="/system/lib/libfdgg14.so";
-                            }
-                            else{
-                                Log.e("mikrom", "use frida15 gadget");
-                            }
-                        }else{
-                            Log.e("mikrom", "use frida15 gadget mikrom is null");
-                        }
-                        mycopy(so64Path, tagPath);//复制so到私有目录
-                        mycopy(so32Path, tagPath2);
-                    }
-                    int perm = FileUtils.S_IRWXU | FileUtils.S_IRWXG | FileUtils.S_IRWXO;
-                    FileUtils.setPermissions(tagPath, perm, -1, -1);//将权限改为777
-                    FileUtils.setPermissions(tagPath2, perm, -1, -1);
-                    FileUtils.setPermissions(configPath, perm, -1, -1);
-                    FileUtils.setPermissions(configPath2, perm, -1, -1);
-                    File file1 = new File(tagPath);
-                    File file2 = new File(tagPath2);
-                    if (file1.exists()) {
-                        Log.e("mikrom", "app: " +System.getProperty("os.arch"));//判断是64位还是32位
-                        if (System.getProperty("os.arch").indexOf("64") >= 0) {
-                            Log.e("mikrom", "initConfig package:" + processName+" frida js path:"+item.fridaJsPath+" load arch64");
-                            System.load(tagPath);
-                            file1.delete();//用完就删否则不会更新
-                        } else {
-                            Log.e("mikrom", "initConfig package:" + processName+" frida js path:"+item.fridaJsPath+" load 32");
-                            System.load(tagPath2);
-                            file2.delete();
-                        }
-                    }
-                    Log.e("mikrom", "initConfig package:" + processName+" initConfig over");
+                    loadSo(gadPath);
+                    Log.e("mikrom", "loadGadget package:" + processName+" over");
                 }catch(Exception ex){
-                    Log.e("mikrom", "initConfig package:" + processName+" frida js path:"+item.fridaJsPath+" load err:"+ex.getMessage());
+                    Log.e("mikrom", "loadGadget package:" + processName+" frida js path:"+item.fridaJsPath+" load err:"+ex.getMessage());
                 }
                 break;
             }
         }
     }
 
+    public static void loadIOHook(Application app){
+        String processName = ActivityThread.currentProcessName();
+        Log.e("mikrom", "loadIOHook:" + processName);
+        for(PackageItem item : mikConfigs) {
+            if (!item.packageName.equals(processName)){
+                Log.e("mikrom", "loadIOHook continue " + item.packageName);
+                continue;
+            }
+            if(item.rediectFile.length()<=0&&item.forbids.length()<=0&&item.rediectDir.length()<=0){
+                Log.e("mikrom", "loadIOHook rediectData and forbids is empty " + item.packageName);
+                continue;
+            }
+            Log.e("mikrom", "start loadIOHook " + processName);
+            if(System.getProperty("os.arch").indexOf("64") >= 0) {
+                if(!item.isDobby){
+                    loadSo("/system/lib64/libdby.so");
+                }
+                loadSo("/system/lib64/libIOHook.so");
+            }else{
+                if(!item.isDobby){
+                    loadSo("/system/lib/libdby.so");
+                }
+                loadSo("/system/lib/libIOHook.so");
+            }
+            Log.e("mikrom", "load IOHook over");
+            if(item.rediectFile.length()>0){
+                String[] rediects= item.rediectFile.split("\n");
+                for(String rediect : rediects){
+                    if(rediect.length()<=0)
+                        continue;
+                    String[] rdata=rediect.split("->");
+                    if(rdata.length<=1)
+                        continue;
+                    String src=rdata[0];
+                    String dest=rdata[1];
+                    Log.e("mikrom", "rediect:"+rediect);
+                    NativeEngine.redirectFile(src,dest);
+                }
+            }
+            if(item.rediectDir.length()>0){
+                String[] rediects= item.rediectDir.split("\n");
+                for(String rediect : rediects){
+                    if(rediect.length()<=0)
+                        continue;
+                    String[] rdata=rediect.split("->");
+                    if(rdata.length<=1)
+                        continue;
+                    String src=rdata[0];
+                    String dest=rdata[1];
+                    Log.e("mikrom", "rediect dir:"+rediect);
+                    NativeEngine.redirectDirectory(src,dest);
+                }
+            }
+            if(item.forbids.length()>0){
+                String[] forbids=item.forbids.split(";");
+                for(String forbid : forbids){
+                    if(forbid.length()<=0)
+                        continue;
+                    Log.e("mikrom", "forbid:"+forbid);
+                    NativeEngine.forbid(forbid,true);
+                }
+            }
+            //开启IO重定向
+            NativeEngine.enableIORedirect(app.getBaseContext());
+        }
+    }
+
     public static boolean shouldMikRom() {
         boolean should = false;
         String processName = ActivityThread.currentProcessName();
-        Log.e("mikrom", "shouldMikRom processName:"+processName);
+        Log.e("mikrom", "m1 build shouldMikRom processName:"+processName);
         for(PackageItem item : mikConfigs){
             if(item.packageName.equals(processName)){
-                Log.e("mikrom", "shouldMikRom SetRomConfig");
-                SetRomConfig(item);
                 if(item.isTuoke){
                     should=true;
                     if(item.breakClass.length()>0){
@@ -834,6 +909,7 @@ public class Fartext {
                         }
                     }
                     whitePath=item.whitePath;
+                    SetRomConfig(item);
                 }
                 break;
             }
@@ -946,6 +1022,7 @@ public class Fartext {
                 Log.e("mikrom", "fart run over");
             }
         }).start();
+//        fart();
     }
 
 }
