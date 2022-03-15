@@ -67,9 +67,14 @@ PixelExperience的版本不再更新，已迁移回aosp。后续如果更新都�
 
 ### 视频介绍
 
+[MikRom编译简单说明](https://www.bilibili.com/video/BV1fY411J7vp/)
+
 [MikRom简单使用脱壳演示](https://www.bilibili.com/video/BV1vb4y1x73Q?spm_id_from=333.999.0.0)
 
 [MikRom的注入功能](https://www.bilibili.com/video/BV1tL411N7w1?spm_id_from=333.999.0.0)
 
 [MikRom内置的frida-gadget使用](https://www.bilibili.com/video/BV1RS4y137p1/)
 
+[MikRom函数睡眠和smali指令trace](https://www.bilibili.com/video/BV11r4y1i7cy/)
+
+[MikRom的dex注入Sandhook来实现免root下的xposed](https://www.bilibili.com/video/BV1k34y1t7Q3/)
