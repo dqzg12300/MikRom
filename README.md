@@ -22,6 +22,8 @@ https://github.com/dqzg12300/MikManager.git
 
 PixelExperience的版本不再更新，已迁移回aosp。后续如果更新都是在aosp版本了。
 
+1.0.1版本修复必须勾选脱壳一部分辅助功能才能生效的bug。修复smali trace打印的bug。优化dex注入功能。
+
 ### 编译说明
 
 在[谷歌官网](https://source.android.com/setup/start/build-numbers?hl=zh-cn)找到你设备应该使用的对应版本
