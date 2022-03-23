@@ -42,7 +42,7 @@ public class Fartext {
             Field field = obj_class.getDeclaredField(filedName);
             field.setAccessible(true);
             return field;
-        } catch (SecurityException e) {
+        } catch (SecurityException e) { 
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
@@ -550,6 +550,7 @@ public class Fartext {
                     cfg.rediectFile=jobj.getString("rediectFile");
                     cfg.rediectDir=jobj.getString("rediectDir");
                     cfg.dexClassName=jobj.getString("dexClassName");
+                    cfg.isBlock=jobj.getBoolean("isBlock");
                     mikConfigs.add(cfg);
                     Log.e("mikrom", "initConfig packageName" + cfg.packageName);
                     String processName = ActivityThread.currentProcessName();
@@ -886,14 +887,12 @@ public class Fartext {
         }
     }
 
-    public static boolean shouldMikRom() {
-        boolean should = false;
+    public static PackageItem shouldMikRom() {
         String processName = ActivityThread.currentProcessName();
         Log.e("mikrom", "m1 build shouldMikRom processName:"+processName);
         for(PackageItem item : mikConfigs){
             if(item.packageName.equals(processName)){
                 if(item.isTuoke){
-                    should=true;
                     if(item.breakClass.length()>0){
                         Log.e("mikrom", "shouldMikRom breakClass:"+item.breakClass);
                         String[] bclasses=item.breakClass.split("\n");
@@ -909,23 +908,23 @@ public class Fartext {
                         }
                     }
                     whitePath=item.whitePath;
-                    SetRomConfig(item);
                 }
-                break;
+                SetRomConfig(item);
+                return item;
             }
         }
-        Log.e("mikrom", "shouldMikRom processName:"+processName+" res:"+should);
-        return should;
+        Log.e("mikrom", "shouldMikRom null processName:"+processName);
+        return null;
     }
 
     public static String getClassList() {
         String processName = ActivityThread.currentProcessName();
         BufferedReader br = null;
         if(whitePath.length()<=0){
-            Log.e("mikrom", "shouldMikRom processName:"+processName+" not whitePath");
+            Log.e("mikrom", "getClassList processName:"+processName+" not whitePath");
             return "";
         }
-        Log.e("mikrom", "shouldMikRom processName:"+processName+" whitePath:"+whitePath);
+        Log.e("mikrom", "getClassList processName:"+processName+" whitePath:"+whitePath);
         StringBuilder sb = new StringBuilder();
         try {
             br = new BufferedReader(new FileReader(whitePath));
@@ -995,34 +994,57 @@ public class Fartext {
     }
 
     public static void fartthread () {
-
-        if (!shouldMikRom()) {
+        PackageItem item=shouldMikRom();
+        if (item==null||!item.isTuoke) {
             return;
         }
-
-        String classlist = getClassList();
-        if (!classlist.equals("")) {
-            fartWithClassList(classlist);
-            return;
-        }
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                try {
-                    Log.e("mikrom", "start sleep......");
-                    Thread.sleep(1 * 30 * 1000);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                Log.e("mikrom", "sleep over and start fart");
-                fart();
-                Log.e("mikrom", "fart run over");
+        if(item.isBlock){
+            String classlist = getClassList();
+            if (!classlist.equals("")) {
+                fartWithClassList(classlist);
+                return;
             }
-        }).start();
-//        fart();
+            Log.e("mikrom", "fart start block call");
+            fart();
+            Log.e("mikrom", "fart run over");
+        }else{
+            String classlist = getClassList();
+            if (!classlist.equals("")) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO Auto-generated method stub
+                        try {
+                            Log.e("mikrom", "start sleep......");
+                            Thread.sleep(1 * 30 * 1000);
+                        } catch (InterruptedException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        Log.e("mikrom", "sleep over and start classList fart");
+                        fartWithClassList(classlist);
+                        Log.e("mikrom", "classList fart run over");
+                    }
+                }).start();
+                return;
+            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+                    try {
+                        Log.e("mikrom", "start sleep......");
+                        Thread.sleep(1 * 30 * 1000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    Log.e("mikrom", "sleep over and start fart");
+                    fart();
+                    Log.e("mikrom", "fart run over");
+                }
+            }).start();
+        }
     }
 
 }

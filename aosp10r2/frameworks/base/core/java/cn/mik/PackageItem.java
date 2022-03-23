@@ -48,6 +48,8 @@ public class PackageItem{
     public String rediectDir;
     //拒绝访问的路径,多个路径用换行分割
     public String forbids;
+    //是否阻塞调用
+    public boolean isBlock;
 
     public PackageItem(){
 
