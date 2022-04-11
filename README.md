@@ -16,6 +16,8 @@ https://github.com/dqzg12300/MikManager.git
 >
 > aosp10r2_marlin_1.0.1线刷包 链接: https://pan.baidu.com/s/1RVpoD17mava4-xO052NShQ  密码: ip7n
 >
+> lineageOS17.1_marlin卡刷包 链接: https://pan.baidu.com/s/1vX3jPuAwhrVPeY45af6dTA  密码: drm1
+>
 > Aosp源码完整包 链接: https://pan.baidu.com/s/1UZBD6ZmhJ9IXPyMluHeVmw 提取码: ifgc 
 
 ### 说明
@@ -23,6 +25,8 @@ https://github.com/dqzg12300/MikManager.git
 PixelExperience的版本不再更新，已迁移回aosp。后续如果更新都是在aosp版本了。
 
 1.0.1版本修复必须勾选脱壳一部分辅助功能才能生效的bug。修复smali trace打印的bug。优化dex注入功能。
+
+新增lineageOS卡刷包，这个版本优化了一下debuggable控制开关，不过修改这个设置后需要重装app生效
 
 ### 编译说明
 
