@@ -16,7 +16,7 @@ https://github.com/dqzg12300/MikManager.git
 >
 > aosp10r2_marlin_1.0.1线刷包 链接: https://pan.baidu.com/s/1RVpoD17mava4-xO052NShQ  密码: ip7n
 >
-> Aosp10r2_blueline_1.0.1线刷包 链接: https://pan.baidu.com/s/1tgd0RPawGu4ck2FNgI1l-g 提取码: c787 
+> Aosp10r2_blueline_1.0.1线刷包 链接: https://pan.baidu.com/s/15pcX9HFHOIYLVZtnV9j13g  密码: dlsu
 >
 > lineageOS17.1_marlin卡刷包 链接: https://pan.baidu.com/s/1vX3jPuAwhrVPeY45af6dTA  密码: drm1
 >
