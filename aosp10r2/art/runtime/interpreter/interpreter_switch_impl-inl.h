@@ -2679,7 +2679,7 @@ ATTRIBUTE_NO_SANITIZE_ADDRESS void ExecuteSwitchImplCpp(SwitchImplContext* ctx) 
     if(regvalue==111111){
         if(inst_count == 0){
             if(opcode == Instruction::GOTO || opcode == Instruction::GOTO_16 || opcode == Instruction::GOTO_32){
-                //LOG(ERROR) << "mikrom ExecuteSwitchImplCpp Switch inst_count=0 opcode==GOTO "<<shadow_frame.GetMethod()->PrettyMethod().c_str();
+                LOG(ERROR) << "mikrom ExecuteSwitchImplCpp Switch inst_count=0 opcode==GOTO "<<shadow_frame.GetMethod()->PrettyMethod().c_str();
                 flag=true;
             }
             else{
@@ -2720,13 +2720,13 @@ DEX_INSTRUCTION_LIST(OPCODE_CASE)
     if(regvalue==111111){
         if(inst_count==2&&flag){
             if(opcode == Instruction::INVOKE_STATIC || opcode == Instruction::INVOKE_STATIC_RANGE){
-                //LOG(ERROR) << "mikrom ExecuteSwitchImplCpp Switch INVOKE_STATIC over "<<shadow_frame.GetMethod()->PrettyMethod().c_str();
+                LOG(ERROR) << "mikrom ExecuteSwitchImplCpp Switch INVOKE_STATIC over "<<shadow_frame.GetMethod()->PrettyMethod().c_str();
                 dumpArtMethod(shadow_frame.GetMethod());
                 break;
             }
         }
         if(inst_count>2){
-            //LOG(ERROR) << "mikrom ExecuteSwitchImplCpp Switch inst_count>2 " <<shadow_frame.GetMethod()->PrettyMethod().c_str();
+            LOG(ERROR) << "mikrom ExecuteSwitchImplCpp Switch inst_count>2 " <<shadow_frame.GetMethod()->PrettyMethod().c_str();
             dumpArtMethod(shadow_frame.GetMethod());
             break;
         }

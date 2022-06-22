@@ -191,23 +191,23 @@ public class Fartext {
     }
 
     //取指定类的所有构造函数，和所有函数，使用dumpMethodCode函数来把这些函数给保存出来
-    public static void loadClassAndInvoke(ClassLoader appClassloader, String eachclassname, Method dumpMethodCode_method) {
+    public static int loadClassAndInvoke(ClassLoader appClassloader, String eachclassname, Method dumpMethodCode_method) {
         if(whiteClass.size()>0){
             if(!isWhiteClass(eachclassname)){
                 Log.e("mikrom", "loadClassAndInvoke->" + "classname:" + eachclassname+" is not white Class");
-                return;
+                return -1;
             }
             if(bClass.size()>0){
                 if(isBreakClass(eachclassname)){
                     Log.e("mikrom", "loadClassAndInvoke->" + "classname:" + eachclassname+" is break Class");
-                    return;
+                    return -1;
                 }
             }
         }else{
             if(bClass.size()>0){
                 if(isBreakClass(eachclassname)){
                     Log.e("mikrom", "loadClassAndInvoke->" + "classname:" + eachclassname+" is break Class");
-                    return;
+                    return -1;
                 }
             }
         }
@@ -218,10 +218,12 @@ public class Fartext {
             resultclass = appClassloader.loadClass(eachclassname);
         } catch (Exception e) {
             e.printStackTrace();
-            return;
+            Log.e("mikrom", "load class err1:"+e.getMessage());
+            return -2;
         } catch (Error e) {
+            Log.e("mikrom", "load class err2:"+e.getMessage());
             e.printStackTrace();
-            return;
+            return -2;
         }
         if (resultclass != null) {
             try {
@@ -248,8 +250,12 @@ public class Fartext {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.e("mikrom", "Constructor invoke err1:"+e.getMessage());
+                return -3;
             } catch (Error e) {
                 e.printStackTrace();
+                Log.e("mikrom", "Constructor invoke err2:"+e.getMessage());
+                return -3;
             }
             try {
                 Method[] methods = resultclass.getDeclaredMethods();
@@ -265,9 +271,11 @@ public class Fartext {
                                 dumpMethodCode_method.invoke(null, m);
                             } catch (Exception e) {
                                 e.printStackTrace();
+                                Log.e("mikrom", "Method invoke err1:"+e.getMessage());
                                 continue;
                             } catch (Error e) {
                                 e.printStackTrace();
+                                Log.e("mikrom", "Method invoke err2:"+e.getMessage());
                                 continue;
                             }
                         } else {
@@ -275,13 +283,19 @@ public class Fartext {
                         }
                     }
                     Log.e("mikrom", "go into loadClassAndInvoke->"   + "classname:" + eachclassname+ " end invoke");
+                    return 0;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.e("mikrom", "Method invoke err3:"+e.getMessage());
+                return -4;
             } catch (Error e) {
                 e.printStackTrace();
+                Log.e("mikrom", "Method invoke err4:"+e.getMessage());
+                return -4;
             }
         }
+        return 0;
     }
 
     //根据classLoader->pathList->dexElements拿到dexFile
@@ -943,6 +957,38 @@ public class Fartext {
         return sb.toString();
     }
 
+    public static ClassLoader getClassLoaderByClassName(String clsname){
+        Log.e("mikrom", "getClassLoaderByClassName clsname:"+clsname);
+        ClassLoader appClassloader = getClassloader();
+        if(appClassloader==null){
+            Log.e("mikrom", "appClassloader is null");
+            return null;
+        }
+        ClassLoader parentClassloader=appClassloader.getParent();
+        if(appClassloader.toString().indexOf("java.lang.BootClassLoader")==-1)
+        {
+            try {
+                appClassloader.loadClass(clsname);
+                return appClassloader;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        while(parentClassloader!=null){
+            if(parentClassloader.toString().indexOf("java.lang.BootClassLoader")==-1)
+            {
+                try {
+                    appClassloader.loadClass(clsname);
+                    return appClassloader;
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+            parentClassloader=parentClassloader.getParent();
+        }
+        return null;
+    }
+
     public static void fartWithClassList (String classlist){
         Log.e("mikrom", "fartWithClassList");
         ClassLoader appClassloader = getClassloader();
@@ -971,14 +1017,25 @@ public class Fartext {
             }
         }
         String[] classes = classlist.split("\n");
-        for (String clsname : classes) {
-            String line = clsname;
-            if (line.startsWith("L") && line.endsWith(";") && line.contains("/")) {
-                line = line.substring(1, line.length() - 1);
-                line = line.replace("/", ".");
-            }
-            loadClassAndInvoke(appClassloader, line, dumpMethodCode_method);
+        String tmp= classes[0];
+        if (tmp.startsWith("L") && tmp.endsWith(";")) {
+            tmp = tmp.substring(1, tmp.length() - 1);
+            tmp = tmp.replace("/", ".");
         }
+        ClassLoader classLoader=getClassLoaderByClassName(tmp);
+        if(classLoader!=null){
+            for (String clsname : classes) {
+                String line = clsname;
+                if (line.startsWith("L") && line.endsWith(";")) {
+                    line = line.substring(1, line.length() - 1);
+                    line = line.replace("/", ".");
+                }
+                loadClassAndInvoke(classLoader, line, dumpMethodCode_method);
+            }
+        }else{
+            Log.e("mikrom", "not found classLoader by class:"+tmp);
+        }
+
         if(dumpRepair_method!=null){
             Log.e("mikrom", "fartWithClassList dumpRepair");
             try {
