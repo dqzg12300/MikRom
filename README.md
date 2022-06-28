@@ -14,11 +14,11 @@ https://github.com/dqzg12300/MikManager.git
 >
 > aosp10r2_sailfish线刷包 链接: https://pan.baidu.com/s/1LIdFa8vSJEmQbqXq5X7AjA  密码: q6q1
 >
-> aosp10r2_marlin_1.0.1线刷包 链接: https://pan.baidu.com/s/1RVpoD17mava4-xO052NShQ  密码: ip7n
->
-> Aosp10r2_blueline_1.0.1线刷包 链接: https://pan.baidu.com/s/15pcX9HFHOIYLVZtnV9j13g  密码: dlsu
+> aosp10r2_blueline_1.0.1线刷包 链接: https://pan.baidu.com/s/15pcX9HFHOIYLVZtnV9j13g  密码: dlsu
 >
 > lineageOS17.1_marlin卡刷包 链接: https://pan.baidu.com/s/1vX3jPuAwhrVPeY45af6dTA  密码: drm1
+>
+> aosp10r2_marlin_1.0.1链接: https://pan.baidu.com/s/1jJmGbRSJA6zlR50BuG0vOw  密码: shsu
 >
 > Aosp源码完整包 链接: https://pan.baidu.com/s/1UZBD6ZmhJ9IXPyMluHeVmw 提取码: ifgc 
 
