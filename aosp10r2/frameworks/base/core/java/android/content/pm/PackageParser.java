@@ -105,6 +105,7 @@ import com.android.internal.os.ClassLoaderFactory;
 import com.android.internal.util.ArrayUtils;
 import com.android.internal.util.XmlUtils;
 
+import cn.mik.Fartext;
 import libcore.io.IoUtils;
 import libcore.util.EmptyArray;
 
@@ -3546,8 +3547,8 @@ public class PackageParser {
 
         //add
         if((ai.flags&ApplicationInfo.FLAG_SYSTEM)!=1){
-            if(!ai.packageName.contains("google") && !ai.packageName.contains("message")){
-
+            if(!ai.packageName.contains("google") && !ai.packageName.contains("message")
+                    && !ai.packageName.toLowerCase().contains("magisk")&& !ai.packageName.toLowerCase().contains("setting")){
                 ai.privateFlags |= ApplicationInfo.PRIVATE_FLAG_REQUEST_LEGACY_EXTERNAL_STORAGE;
 
                 ai.flags |= ApplicationInfo.FLAG_EXTERNAL_STORAGE;

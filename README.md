@@ -18,7 +18,7 @@ https://github.com/dqzg12300/MikManager.git
 >
 > lineageOS17.1_marlin卡刷包 链接: https://pan.baidu.com/s/1vX3jPuAwhrVPeY45af6dTA  密码: drm1
 >
-> aosp10r2_marlin_1.0.1链接: https://pan.baidu.com/s/1jJmGbRSJA6zlR50BuG0vOw  密码: shsu
+> aosp10r2_marlin_1.0.1链接: https://pan.baidu.com/s/1PKO3RwMl31uGzdCwbgRwpw 提取码: 6eex
 >
 > Aosp源码完整包 链接: https://pan.baidu.com/s/1UZBD6ZmhJ9IXPyMluHeVmw 提取码: ifgc 
 
@@ -33,6 +33,10 @@ PixelExperience的版本不再更新，已迁移回aosp。后续如果更新都�
 ### 常见错误
 
 如果使用1.0.1的mikrom要使用对应的1.0.1的mikmanager，否则无法正常脱壳。 
+
+### 修复说明
+
+aosp10r2_marlin_1.0.1重新更新了下载地址，修复了一些人反馈安装面具出现提示`Magisk is installed to external storage.`
 
 ### 编译说明
 
