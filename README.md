@@ -34,6 +34,13 @@ PixelExperience的版本不再更新，已迁移回aosp。后续如果更新都�
 
 如果使用1.0.1的mikrom要使用对应的1.0.1的mikmanager，否则无法正常脱壳。 
 
+### win刷机
+
+很多人说blueline在windown下刷机有问题，所以我做了个视频介绍怎么在win下刷机，不过我的大b站号有点问题，视频暂时先放百度云盘，过几天再搬到B站
+
+链接：https://pan.baidu.com/s/1v71szCRtd06WrnEO-ow_fw 
+提取码：s8w1 
+
 ### 修复说明
 
 aosp10r2_marlin_1.0.1重新更新了下载地址，修复了一些人反馈安装面具出现提示`Magisk is installed to external storage.`
