@@ -36,10 +36,7 @@ PixelExperience的版本不再更新，已迁移回aosp。后续如果更新都�
 
 ### win刷机
 
-很多人说blueline在windown下刷机有问题，所以我做了个视频介绍怎么在win下刷机，不过我的大b站号有点问题，视频暂时先放百度云盘，过几天再搬到B站
-
-链接：https://pan.baidu.com/s/1v71szCRtd06WrnEO-ow_fw 
-提取码：s8w1 
+很多人说blueline在windown下刷机有问题，所以我做了个视频介绍怎么在win下刷机，b站地址贴在最后面了。
 
 ### 修复说明
 
@@ -101,3 +98,5 @@ aosp10r2_marlin_1.0.1重新更新了下载地址，修复了一些人反馈安�
 [MikRom函数睡眠和smali指令trace](https://www.bilibili.com/video/BV11r4y1i7cy/)
 
 [MikRom的dex注入Sandhook来实现免root下的xposed](https://www.bilibili.com/video/BV1k34y1t7Q3/)
+
+[window刷机问题](https://www.bilibili.com/video/BV1id4y1F7GS/)
