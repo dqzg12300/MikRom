@@ -100,3 +100,9 @@ aosp10r2_marlin_1.0.1重新更新了下载地址，修复了一些人反馈安�
 [MikRom的dex注入Sandhook来实现免root下的xposed](https://www.bilibili.com/video/BV1k34y1t7Q3/)
 
 [window刷机问题](https://www.bilibili.com/video/BV1id4y1F7GS/)
+
+
+交流群
+
+![qun](./qun.jpg)
+=======
