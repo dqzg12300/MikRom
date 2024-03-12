@@ -101,8 +101,6 @@ aosp10r2_marlin_1.0.1重新更新了下载地址，修复了一些人反馈安�
 
 [window刷机问题](https://www.bilibili.com/video/BV1id4y1F7GS/)
 
+### MikRom2.0
 
-交流群
-
-![qun](./qun.jpg)
-=======
+http://docs.missking.cc/
